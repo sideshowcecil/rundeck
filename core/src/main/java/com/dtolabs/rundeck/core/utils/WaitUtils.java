@@ -28,7 +28,7 @@ public class WaitUtils {
         while (!acceptanceResult) {
             Thread.sleep(Math.min(checkPeriod.toMillis(), timeout.toMillis()));
             if ((System.currentTimeMillis() - initTime) >= timeout.toMillis()) {
-                throw new ResourceAcceptanceTimeoutException("Timeout reached (${timeout.toSeconds()} seconds) waiting for ${r} to reach the desired state");
+                throw new ResourceAcceptanceTimeoutException("Timeout reached (" + timeout.toMillis() + "ms) waiting for value: " + r + " to reach the desired state");
             }
             r = retryableResourceRetriever.get();
             acceptanceResult = resourceAcceptanceEvaluator.apply(r);

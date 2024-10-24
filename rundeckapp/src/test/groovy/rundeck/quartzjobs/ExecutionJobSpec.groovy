@@ -23,6 +23,7 @@ import com.dtolabs.rundeck.core.common.IRundeckProject
 import com.dtolabs.rundeck.core.execution.WorkflowExecutionServiceThread
 import com.dtolabs.rundeck.core.execution.workflow.StepExecutionContext
 import com.dtolabs.rundeck.core.schedule.JobScheduleManager
+import com.dtolabs.rundeck.core.utils.ResourceAcceptanceTimeoutException
 import grails.testing.gorm.DataTest
 import org.quartz.*
 import org.rundeck.app.data.providers.GormJobStatsDataProvider
@@ -65,6 +66,7 @@ class ExecutionJobSpec extends Specification implements DataTest {
         then:
         MissingScheduledExecutionException e = thrown()
         e.message == "Failed to lookup ScheduledExecution object from job data map: id: 123 in db, job will be unscheduled"
+        e.getCause() instanceof ResourceAcceptanceTimeoutException
     }
 
     def "execute retrieves execution id"() {
