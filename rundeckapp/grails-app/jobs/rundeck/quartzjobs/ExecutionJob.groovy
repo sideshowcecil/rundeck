@@ -660,10 +660,10 @@ class ExecutionJob implements InterruptableJob {
         String seid = requireEntry(jobDataMap, "scheduledExecutionId", String)
         String projectName = requireEntry(jobDataMap, "project", String)
 
-        // There is a possibility of race condition between this quartz thread (that gets ScheduledExecution id from in-memory state) and
-        //  the web server thread that creates the ScheduledExecution object(s) in the DB in a transactional context.
-        // It possible that the job execution starts (this thread) before the web server thread saves the object to the DB.
-        // The retry logic is introduced to mitigate this problem.
+        // There is a possibility of race condition between this quartz thread that gets ScheduledExecution ID from memory and
+        // the web server thread that creates the ScheduledExecution object in the DB. This issue occurs when this thread
+        // attempts to fetch the newly created ScheduledExecution object from the DB before it's commited.
+        // The fetch retry logic is introduced to mitigate this problem.
         try {
             ScheduledExecution se = WaitUtils.<ScheduledExecution>waitFor(
                     {ScheduledExecution.findByUUID(seid).find()},
